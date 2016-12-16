@@ -16,4 +16,4 @@ The controls are as follows:
   * Press **Up** to display or hide the information box in the bottomright corner
   * Press **Down** to set the current configuration as the start (resets the "original" cells to whatever is alive now and loses the ability to step backwards in time)
 
-  [It is available here.](https://lminsky.github.io/Game-of-Life/)
+  [It is available here](https://lminsky.github.io/Game-of-Life/)
