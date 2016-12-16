@@ -1,4 +1,4 @@
-# Game-of-Life
+# Game of Life
 Conway's Game of Life implemented in p5.js
 
 This Game of Life is bound by the boarders of the window. A living cell on the edge of the screen cannot have a neighbor beyond the border. The simulation will automatically stop if:
