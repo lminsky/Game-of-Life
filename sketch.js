@@ -8,7 +8,7 @@ var life = [];          //An array to store every moment of the simulation (3D)
 var loopSize = false;   //Is false if not in a loop. Becomes an int if there is a loop
 var showOrig = false;   //A boolean to show or hide indicators for where the simulation started
 var showHist = false;   //A boolean to show or hide indicators for where cells were once alive
-
+var onScreen;
 
 function setup() {
   createCanvas(windowWidth, windowHeight);  //Create the canvas
@@ -18,6 +18,7 @@ function setup() {
 
 function draw() {
   background(255);                          //Draw a white background
+  console.log(life);
   displayGrid();                            //Draw every cell
   
   if(showKey)                               //If the showKey variable is true...
@@ -87,17 +88,17 @@ function createArray(a) {
     }
     a.push(temp);
   }
+  onScreen = {
+    x: Math.ceil(width/squareSize),
+    y: Math.ceil(height/squareSize)
+  }
 }
 
 
 function displayGrid() {
   var count = 0                                                   //Initialize a counter to track how many living cells there are
-  for(var x = Math.floor(life[life.length-1].length * 1 / 3); x < life[life.length-1].length * 2 / 3; x++) {           //Loop through the current grid
-    var l = life[life.length-1][0].length;
-    // console.log(l);
-    for(var y = Math.floor(l * 1 / 3); y < l * 2 / 3; y++) {
-      // console.log(x);
-      // console.log(life[0]);
+  for(var x = onScreen; x < life[life.length-1].length + onScreen.x; x++) {           //Loop through the current grid
+    for(var y = onScreen.y; y < life[life.length-1][x].length + onScreen.y; y++) {
       if(life[0][x][y] == 1 && showOrig) {                        //If showOrig is true, highlight the starter cells in blue
         stroke(0, 0, 100);
         strokeWeight(2);
@@ -222,8 +223,8 @@ function reduceToOne() {
 
 //toggle a cell alive/dead and stop the simulation if it's running
 function mousePressed() {
-  var tx = Math.floor(mouseX/squareSize + life[0].length/3);
-  var ty = Math.floor(mouseY/squareSize + life[0][0].length/3);
+  var tx = Math.floor(mouseX/squareSize + onScreen.x);
+  var ty = Math.floor(mouseY/squareSize + onScreen.y);
   if(life[life.length-1][tx][ty] == 1) {
     life[life.length-1][tx][ty] = 2;
   } else {
