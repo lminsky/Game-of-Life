@@ -15,3 +15,5 @@ The controls are as follows:
   * Press **o** to toggle the original display (cells that were alive in the initial moment of the simulation are outlined in blue)
   * Press **Up** to display or hide the information box in the bottomright corner
   * Press **Down** to set the current configuration as the start (resets the "original" cells to whatever is alive now and loses the ability to step backwards in time)
+
+  [It is available here.](https://lminsky.github.io/Game-of-Life/)
