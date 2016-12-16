@@ -18,7 +18,6 @@ function setup() {
 
 function draw() {
   background(255);                          //Draw a white background
-  console.log(life);
   displayGrid();                            //Draw every cell
   
   if(showKey)                               //If the showKey variable is true...
@@ -97,8 +96,8 @@ function createArray(a) {
 
 function displayGrid() {
   var count = 0                                                   //Initialize a counter to track how many living cells there are
-  for(var x = onScreen; x < life[life.length-1].length + onScreen.x; x++) {           //Loop through the current grid
-    for(var y = onScreen.y; y < life[life.length-1][x].length + onScreen.y; y++) {
+  for(var x = 0; x < life[life.length-1].length; x++) {           //Loop through the current grid
+    for(var y = 0; y < life[life.length-1][x].length; y++) {
       if(life[0][x][y] == 1 && showOrig) {                        //If showOrig is true, highlight the starter cells in blue
         stroke(0, 0, 100);
         strokeWeight(2);
@@ -118,7 +117,7 @@ function displayGrid() {
           fill(255);
          }
       }
-      rect(x * squareSize, y * squareSize, squareSize, squareSize);   //draw the actual cells
+      rect(x * squareSize - onScreen.x, y * squareSize - onScreen.y, squareSize, squareSize);   //draw the actual cells
       strokeWeight(1);
     }
   }
@@ -223,8 +222,9 @@ function reduceToOne() {
 
 //toggle a cell alive/dead and stop the simulation if it's running
 function mousePressed() {
-  var tx = Math.floor(mouseX/squareSize + onScreen.x);
-  var ty = Math.floor(mouseY/squareSize + onScreen.y);
+  var tx = Math.ceil(mouseX/squareSize);
+  var ty = Math.ceil(mouseY/squareSize);
+  console.log(tx + ", " + ty);
   if(life[life.length-1][tx][ty] == 1) {
     life[life.length-1][tx][ty] = 2;
   } else {
