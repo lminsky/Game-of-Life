@@ -3,7 +3,7 @@ var run;                //A boolean to allow the simulation to proceed or not
 var speed = 5;          //The starting frame rate
 var oneStep = false;    //A boolean to allow the simulation to proceed one step
 var showKey = true;     //A boolean to show or hide the key in the bottom right hand corner
-var livingCells = 0;    //A count of how many living cells there are at any given time
+var livingCells;   //A count of how many living cells there are at any given time
 var life = [];          //An array to store every moment of the simulation (3D)
 var loopSize = false;   //Is false if not in a loop. Becomes an int if there is a loop
 var showOrig = false;   //A boolean to show or hide indicators for where the simulation started
@@ -61,10 +61,21 @@ function displayKey() {
   if(loopSize != false) {                             //If the simulation is in a loop...
     run = false;
     fill(180, 0, 0);
-    text("In a " + (loopSize-1)+ " cycle loop", width - 130, height - 65);  //write the size of the loop
+    text("In a " + (loopSize) + " cycle loop", width - 130, height - 65);  //write the size of the loop
     fill(0);
   }
-  text(livingCells + " Living Cells", width - 190, height - 48);    //Writes the number of living cells there are
+  text(livingCells[life.length - 1] + " Living Cells", width - 190, height - 48);    //Writes the number of living cells there are
+  if(life.length > 1) {
+    var difference = livingCells[life.length-1] - livingCells[life.length - 2];
+    if(difference > 0) {
+      fill(0, 180, 0);
+      text("+" + difference, width - 120, height - 48);
+    } else if(difference < 0) {
+      fill(180, 0, 0);
+      text(difference, width - 120, height - 48);
+    }
+    fill(0);
+  }
   text("Use the left and right arrow keys to step", width - 190, height - 31);    //gives some instructions
 }
 
@@ -73,6 +84,8 @@ function setupGrid() {
   run = false;          //set run to false
   loopSize = false;     //set loopSize to false
   life = [];            //empty the life array
+  livingCells = [];    //initialize the living cell array to empty
+  livingCells[0] = 0;
   var grid = [];        //create a grid array
   createArray(grid);    //populate the grid array
   life.push(grid);      //push the grid array into the life array
@@ -95,7 +108,6 @@ function createArray(a) {
 
 
 function displayGrid() {
-  var count = 0                                                   //Initialize a counter to track how many living cells there are
   for(var x = 0; x < life[life.length-1].length; x++) {           //Loop through the current grid
     for(var y = 0; y < life[life.length-1][x].length; y++) {
       if(life[0][x][y] == 1 && showOrig) {                        //If showOrig is true, highlight the starter cells in blue
@@ -109,7 +121,6 @@ function displayGrid() {
         fill(255);
       } else if(life[life.length-1][x][y] == 1) {                 //if the current cell is alive, make it green and increase count                              //make it green if the showHist flag is set
           fill(0, 100, 0);
-        count++;
       } else {
         if(showHist) {                                            //if it was ever alive make it green (if the showHist flag is set)
           fill(200, 0, 0, 30);
@@ -121,9 +132,6 @@ function displayGrid() {
       strokeWeight(1);
     }
   }
-  livingCells = count;                                            //store the count of living cells
-  if(livingCells == 0)                                            //if all the cells are dead, stop the simulation
-    run = false;
 }
 
 //loop through the grid and apply conway's rules to each cell
@@ -137,27 +145,42 @@ function checkGrid() {
     }
   }
   life.push(tempArray);
+  livingCells[life.length - 1] = countCells(life.length - 1);
   loopSize = checkStatic();                                     //after creating the new grid, check to see if you're looping
+}
+
+function countCells(t) {
+  var count = 0;
+  for(var x = 0; x < life[t].length; x++) {
+    for(var y = 0; y < life[t][x].length; y++) {
+      if(life[t][x][y] == 1) {
+        count++;
+      }
+    }
+  }
+  return count;
 }
 
 //loop through all the old grids to see if you're repeating
 //if you are, return the number of cycles it takes to loop
 function checkStatic() {
-  if(life.length > 5) {
+  if(life.length > 2) {
     var maxCheck = 50;
     if(life.length < 50)
       maxCheck = life.length;
     for(var t = life.length-2; t > life.length-maxCheck; t--) {
-      var different = false
-      for(var x = 0; x < life[t].length; x++) {
-        for(var y = 0; y < life[t][x].length; y++) {
-          if(life[t][x][y] != life[life.length-1][x][y]) {
-            different = true;
+      if(livingCells[t] == livingCells[life.length-1]) {
+        var different = false
+        for(var x = 0; x < life[t].length; x++) {
+          for(var y = 0; y < life[t][x].length; y++) {
+            if(life[t][x][y] != life[life.length-1][x][y]) {
+              different = true;
+            }
           }
         }
-      }
-      if(!different) {
-        return life.length - t;
+        if(!different) {
+          return life.length - t - 1;
+        }
       }
     }
   }
@@ -222,16 +245,15 @@ function reduceToOne() {
 
 //toggle a cell alive/dead and stop the simulation if it's running
 function mousePressed() {
-  console.log(life[0].length);
   var tx = Math.floor(mouseX/squareSize + onScreen.x);
   var ty = Math.floor(mouseY/squareSize + onScreen.y);
-  console.log(tx + ", " + ty);
   if(life[life.length-1][tx][ty] == 1) {
     life[life.length-1][tx][ty] = 2;
   } else {
     life[life.length-1][tx][ty] = 1;
   }
   loopSize = false;
+  livingCells[life.length - 1] = countCells(life.length - 1);
 }
 
 //get use input and do stuff
