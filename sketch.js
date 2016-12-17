@@ -8,7 +8,7 @@ var life = [];          //An array to store every moment of the simulation (3D)
 var loopSize = false;   //Is false if not in a loop. Becomes an int if there is a loop
 var showOrig = false;   //A boolean to show or hide indicators for where the simulation started
 var showHist = false;   //A boolean to show or hide indicators for where cells were once alive
-var onScreen;
+var onScreen;           //Stores the number of cells visible on the screen at any given time
 
 function setup() {
   createCanvas(windowWidth, windowHeight);  //Create the canvas
@@ -80,14 +80,14 @@ function setupGrid() {
 
 //pushes values into the array parameter until it is the appropriate size for the window
 function createArray(a) {
-  for(var x = 0; x < 3 * width/squareSize; x++) {
+  for(var x = 0; x < 3 * width/squareSize; x++) {     //Creates a grid 9x the size of the window
     var temp = [];
     for(var y = 0; y < 3 * height/squareSize; y++) {
       temp.push(0);
     }
     a.push(temp);
   }
-  onScreen = {
+  onScreen = {                                        //Stores the number of cells visible
     x: Math.ceil(width/squareSize),
     y: Math.ceil(height/squareSize)
   }
@@ -117,7 +117,7 @@ function displayGrid() {
           fill(255);
          }
       }
-      rect(x * squareSize - onScreen.x, y * squareSize - onScreen.y, squareSize, squareSize);   //draw the actual cells
+      rect(x * squareSize - onScreen.x * squareSize, y * squareSize - onScreen.y * squareSize, squareSize, squareSize);   //draw the cells (offset by the size of the window)
       strokeWeight(1);
     }
   }
@@ -222,8 +222,9 @@ function reduceToOne() {
 
 //toggle a cell alive/dead and stop the simulation if it's running
 function mousePressed() {
-  var tx = Math.ceil(mouseX/squareSize);
-  var ty = Math.ceil(mouseY/squareSize);
+  console.log(life[0].length);
+  var tx = Math.floor(mouseX/squareSize + onScreen.x);
+  var ty = Math.floor(mouseY/squareSize + onScreen.y);
   console.log(tx + ", " + ty);
   if(life[life.length-1][tx][ty] == 1) {
     life[life.length-1][tx][ty] = 2;
