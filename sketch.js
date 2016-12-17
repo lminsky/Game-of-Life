@@ -69,11 +69,11 @@ function displayKey() {
     var difference = livingCells[life.length-1] - livingCells[life.length - 2];
     if(difference > 0) {
       fill(0, 180, 0);
-      text("+" + difference, width - 120, height - 48);
+      difference = "+" + difference;
     } else if(difference < 0) {
       fill(180, 0, 0);
-      text(difference, width - 120, height - 48);
     }
+    text(difference, width - 120, height - 48);
     fill(0);
   }
   text("Use the left and right arrow keys to step", width - 190, height - 31);    //gives some instructions
